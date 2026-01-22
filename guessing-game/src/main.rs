@@ -7,8 +7,6 @@ fn main () {
 
     let secret_number = rand::thread_rng().gen_range(1..=10);
 
-    println!("The secret number is: {secret_number}");
-
     loop {
         println!("Please input your guess");
 
@@ -21,7 +19,6 @@ fn main () {
             Err(_) => continue,
 
         };
-        //we are comparing the guess variable to OK and Err here
 
         println!("You guessed: {guess}");
 
