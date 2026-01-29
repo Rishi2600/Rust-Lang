@@ -1,7 +1,7 @@
 fn main() {
     let x = 5;
 
-    let x = x + 100;
+    x = x + 100;
 
     {
         let x = x + 1;
