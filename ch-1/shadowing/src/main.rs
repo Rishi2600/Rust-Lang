@@ -1,18 +1,9 @@
 fn main() {
-    let mut x = 5;
+    // let spaces = "    ";
+    // let spaces = spaces.len();
+    // println!("{}", spaces);
 
-    x = x + 100;
-
-    {
-        let x = x + 1;
-
-        {
-            let x = x * 2;
-            println!("The value of x in thesecond  inner scope is: {x}");
-        }
-
-        println!("The value of x in first inner scope is: {x}");
-    }
-
-    println!("The value of x is: {x}");
+    let mut spaces = "    ";
+    spaces = spaces.len();
+    println!("{}", spaces);
 }
