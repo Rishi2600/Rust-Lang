@@ -1,5 +1,5 @@
 fn main() {
-    print_labeled_measurement(5, 'h');
+    print_labeled_measurement(5.to_string(), 'h');
 }
 
 fn print_labeled_measurement(value: String, unit_label: char) {
