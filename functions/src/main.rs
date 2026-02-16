@@ -12,8 +12,8 @@ fn add_numbers(x: i32, y: i32) -> i32 {
     // It performs an action (creating a variable).
     let result = x + y;
 
-    // --- This is an EXPRESSION ---
-    // It has no semicolon. It evaluates to the value of `result`.
-    // This value is returned from the function.
-    result
+    // --- This is STATEMENT not an EXPRESSION ---
+    // since It has a semicolon, now it behanves like another statement. It evaluates to the value of `result`.
+    // This value is now not returned from the function.
+    result;
 }
