@@ -1,7 +1,19 @@
 fn main() {
-    print_labeled_measurement(5.to_string(), 'h');
+    let final_result = add_numbers(3, 4);
+    println!("{}", final_result);
 }
 
-fn print_labeled_measurement(value: String, unit_label: char) {
-    println!("The measurement is: {value}{unit_label}");
+fn add_numbers(x: i32, y: i32) -> i32 {
+    // --- This is a STATEMENT ---
+    // It performs an action (printing) but does not return a value.
+    println!("Adding numbers!");
+
+    // --- This is a STATEMENT ---
+    // It performs an action (creating a variable).
+    let result = x + y;
+
+    // --- This is an EXPRESSION ---
+    // It has no semicolon. It evaluates to the value of `result`.
+    // This value is returned from the function.
+    result
 }
