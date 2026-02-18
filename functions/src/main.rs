@@ -1,3 +1,3 @@
 fn main() {
-    let _y = 6;
+    let x = (let y = 6);
 }
