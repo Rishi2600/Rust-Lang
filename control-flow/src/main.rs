@@ -1,9 +1,9 @@
 fn main() {
-    let number = 3;
+    let number = 2;
 
-    if number {
-        println!("Number is three");
-    } else {
-        println!("Number is not three");
+    if number > 3 {
+        println!("Number is more than 3");
     }
+
+    println!("Hey there")
 }
