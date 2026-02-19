@@ -1,17 +1,23 @@
 fn main() {
+    let mut found = false;
     let number = 6;
 
     if number % 4 == 0 {
-        println!("number is divisible by 4");
+        println!("number is devisible by 4");
+        found = true;
     }
 
     if number % 3 == 0 {
-        println!("number is divisible by 3");
+        println!("number is devisible by 3");
+        found = true;
     }
-    
+
     if number % 2 == 0 {
-        println!("number is divisible by 2");
-    } else {
-        println!("number is not divisible by 4, 3, or 2");
+        println!("number is devisible by 2");
+        found = true;
+    }
+
+    if found == false {
+        println!("number is not devisible by either 2, 3, or 4");
     }
 }
