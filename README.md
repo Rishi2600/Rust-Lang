@@ -5,3 +5,7 @@
 ### I'll divide it into chapters and sub-chapters to keep the understanding clean
 
 ### Will mostly be wriring the code only, the definitions or any key-points are there in every commit.
+
+### CHAPTERS -
+
+1. I started with the guessing game, this is a very basic game where the user has to guess a number from the terminaland by using some pattern matchihng logic `match` we ensure if the number is correct or not. This game is an Ideal game to build the fundamentals before diving into the concepts.
