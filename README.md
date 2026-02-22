@@ -13,3 +13,5 @@
 2. Got some basic understanding of cargo - `cargo init`, `cargo build`, `cargo run`
 
 3. Chatper-1 consists of constants, variables, and shadowing
+
+4. CHapter-2 consists of control-flow => If...else, loop as a part of control-flow
