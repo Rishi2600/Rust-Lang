@@ -11,3 +11,5 @@
 1. I started with the guessing game, this is a very basic game where the user has to guess a number from the terminaland by using some pattern matchihng logic `match` we ensure if the number is correct or not. This game is an Ideal game to build the fundamentals before diving into the concepts.
 
 2. Got some basic understanding of cargo - `cargo init`, `cargo build`, `cargo run`
+
+3. Chatper-1 consists of constants, variables, and shadowing
