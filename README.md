@@ -12,8 +12,8 @@
 
 2. Got some basic understanding of cargo - `cargo init`, `cargo build`, `cargo run`
 
-3. Chatper-1 consists of constants, variables, and shadowing
+3. **Chatper-1** consists of constants, variables, and shadowing
 
-4. Chapter-2 consists of control-flow => If...else, loop as a part of control-flow
+4. **Chapter-2** consists of control-flow => If...else, loop as a part of control-flow
 
-5. Chapter-3 consistes of functions and as the name suggests it is just a function - to get a better understanding, read the commit messages!
+5. **Chapter-3** consistes of functions and as the name suggests it is just a function - to get a better understanding, read the commit messages!
