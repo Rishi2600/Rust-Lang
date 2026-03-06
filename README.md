@@ -17,3 +17,5 @@
 4. **Chapter-2** consists of control-flow => If...else, loop as a part of control-flow
 
 5. **Chapter-3** consistes of functions and as the name suggests it is just a function - to get a better understanding, read the commit messages!
+
+6. **Chapter-4** will consist of memory management in rust -- **Ownerships**
