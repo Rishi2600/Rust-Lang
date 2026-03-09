@@ -1,6 +1,11 @@
-fn main() {
-    // An infinite range of squares, but we only take the first 5
-    let squares: Vec<_> = (1..).map(|x| x * x).take(5).collect();
+fn spell_check() -> Option<String> {
+    let word = Some("Abracadabra");
+    // If word is None, the whole function returns None immediately.
+    let result = word?.get(0..4)?; 
     
-    println!("{:?}", squares); // [1, 4, 9, 16, 25]
+    Some(result.to_uppercase())
+}
+
+fn main() {
+    println!("{:?}", spell_check()); // Some("ABRA")
 }
