@@ -1,9 +1,8 @@
 fn main() {
-    let mut a = "Fire";
-    let mut b = "Ice";
-
-    // The classic swap magic
-    (a, b) = (b, a);
-
-    println!("a: {}, b: {}", a, b); // a: Ice, b: Fire
+    let mystery_number = (1..)
+        .map(|x| x * 10)
+        .filter(|x| x % 3 == 0)
+        .nth(100);
+        
+    println!("{:?}", mystery_number);
 }
