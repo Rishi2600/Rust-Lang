@@ -1,3 +1,4 @@
 fn main() {
-    let x = (let y = 6);
+    let magic = "nuf si tsuR".chars().rev().collect::<String>();
+    println!("{}", magic); // "Rust is fun"
 }
