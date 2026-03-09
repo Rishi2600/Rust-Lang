@@ -1,11 +1,9 @@
-fn spell_check() -> Option<String> {
-    let word = Some("Abracadabra");
-    // If word is None, the whole function returns None immediately.
-    let result = word?.get(0..4)?; 
-    
-    Some(result.to_uppercase())
-}
-
 fn main() {
-    println!("{:?}", spell_check()); // Some("ABRA")
+    let mut a = "Fire";
+    let mut b = "Ice";
+
+    // The classic swap magic
+    (a, b) = (b, a);
+
+    println!("a: {}, b: {}", a, b); // a: Ice, b: Fire
 }
