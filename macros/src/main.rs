@@ -1,10 +1,21 @@
 macro_rules! add_as{
-// using a ty token type for macthing datatypes passed to maccro
-    ($a:expr,$b:expr,$typ:ty)=>{
-        $a as $typ + $b as $typ
+    (
+  // repeated block
+  $($a:expr)
+ // seperator
+   ,
+// zero or more
+   *
+   )=>{
+       { 
+   // to handle the case without any arguments
+   0
+   // block to be repeated
+   $(+$a)*
+     }
     }
 }
 
 fn main(){
-    println!("{}",add_as!(0,2,u8));
+    println!("{}",add_as!(1,2,3,4,5,6,7,8,9,10));
 }
