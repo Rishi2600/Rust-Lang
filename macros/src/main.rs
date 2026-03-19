@@ -24,3 +24,6 @@ fn main(){
 
     println!("sum of both arms: {}", final_sum);
 }
+
+/*There can be multiple branches in a single macro expanding to different code based on different arguments.
+Each branch can take multiple arguments, starting with the $ sign and followed by a token type:*/
