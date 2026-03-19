@@ -1,16 +1,26 @@
 macro_rules! add{
- // macth like arm for macro
+ // first arm match add!(1,2), add!(2,3) etc
     ($a:expr,$b:expr)=>{
- // macro expand to this code
         {
-// $a and $b will be templated using the value/variable provided to macro
             $a+$b
+        }
+    };
+// Second arm macth add!(1), add!(2) etc
+    ($a:expr)=>{
+        {
+            $a
         }
     }
 }
 
 fn main(){
- // call to macro, $a=1 and $b=2
-    let add = add!(1,2);
-    println!("{}", add);
+    let x=0;
+    let arm1 = add!(1,2);
+    println!("{}",  arm1);
+    let arm2 = add!(x);
+    println!("{}", arm2);
+
+    let final_sum = arm1 + arm2;
+
+    println!("sum of both arms: {}", final_sum);
 }
