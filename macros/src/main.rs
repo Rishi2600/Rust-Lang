@@ -1,22 +1,28 @@
-macro_rules! add{
- // first arm in case of single argument and last remaining variable/number
-    ($a:expr)=>{
-        $a
-    };
-// second arm in case of two arument are passed and stop recursion in case of odd number ofarguments
-    ($a:expr,$b:expr)=>{
-        {
-            $a+$b
+macro_rules! ok_or_return{
+// match something(q,r,t,6,7,8) etc
+// compiler extracts function name and arguments. It injects the values in respective varibles.
+    ($a:ident($($b:tt)*))=>{
+       {
+        match $a($($b)*) {
+            Ok(value)=>value,
+            Err(err)=>{
+                return Err(err);
+            }
+        }
         }
     };
-// add the number and the result of remaining arguments 
-    ($a:expr,$($b:tt)*)=>{
-       {
-           $a+add!($($b)*)
-       }
+}
+
+fn some_work(i:i64,j:i64)->Result<(i64,i64),String>{
+    if i+j>2 {
+        Ok((i,j))
+    } else {
+        Err("error".to_owned())
     }
 }
 
-fn main(){
-    println!("{}",add!(1,2,3,4));
+fn main()->Result<(),String>{
+    ok_or_return!(some_work(1,4));
+    ok_or_return!(some_work(1,0));
+    Ok(())
 }
