@@ -1,31 +1,11 @@
-macro_rules! make_public{
-    (
-     $(#[$meta:meta])* 
-     $vis:vis struct $struct_name:ident {
-        $(
-        $(#[$field_meta:meta])*
-        $field_vis:vis $field_name:ident : $field_type:ty
-        ),*$(,)+
-    }
-    ) => {
+extern crate proc_macro;
+use proc_macro::{TokenStream};
+use quote::{quote};
 
-            $(#[$meta])*
-            pub struct $struct_name{
-                $(
-                $(#[$field_meta:meta])*
-                pub $field_name : $field_type,
-                )*
-            }
-    }
-}
-
-fn main(){
-    make_public!{
-        #[derive(Debug)]
-        struct Name{
-            n:i64,
-            t:i64,
-            g:i64,
-        }
-    }
+// using proc_macro_attribute to declare an attribute like procedural macro
+#[proc_macro_attribute]
+// _metadata is argument provided to macro call and _input is code to which attribute like macro attaches
+pub fn my_custom_attribute(_metadata: TokenStream, _input: TokenStream) -> TokenStream {
+    // returing a simple TokenStream for Struct
+    TokenStream::from(quote!{struct H{}})
 }
