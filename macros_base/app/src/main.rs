@@ -1,14 +1,23 @@
-use my_macros::Describe; // The derive macro
-use my_macros::log_call; // The attribute macro
+use my_macros::Describe;
+use my_macros::log_call;
+
+// THE MISSING PIECE: The trait definition
+pub trait Describe {
+    fn describe(&self);
+}
 
 #[derive(Describe)]
-struct User;
+struct User {
+    #[allow(dead_code)]
+    name: String,
+}
 
 #[log_call]
-fn hello() {
-    println!("Hello from the app!");
+fn do_work() {
+    let u = User { name: "Alice".into() };
+    u.describe();
 }
 
 fn main() {
-    hello();
+    do_work();
 }
