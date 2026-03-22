@@ -1,10 +1,16 @@
-use my_macros::sql_check;
+use my_macros::log_with_target;
+
+#[log_with_target("DATABASE")]
+fn save_user() {
+    println!("Saving to DB...");
+}
+
+#[log_with_target("NETWORK")]
+fn fetch_api() {
+    println!("Fetching from API...");
+}
 
 fn main() {
-    // This compiles fine:
-    let query = sql_check!("SELECT * FROM users");
-    println!("Query: {}", query);
-
-    // UNCOMMENT THIS TO BREAK THE BUILD:
-    // let bad_query = sql_check!("DROP TABLE users"); 
+    save_user();
+    fetch_api();
 }

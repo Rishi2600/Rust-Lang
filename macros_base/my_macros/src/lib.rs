@@ -1,16 +1,22 @@
 use proc_macro::TokenStream;
 use quote::quote;
+use syn::parse_macro_input;
 
-#[proc_macro] // <--- This must be exactly this for sql_check!()
-pub fn sql_check(input: TokenStream) -> TokenStream {
-    let input_str = input.to_string();
+#[proc_macro_attribute]
+pub fn log_with_target(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as syn::ItemFn);
+    let target = attr.to_string().replace("\"", ""); // Clean up quotes
+    
+    let name = &input.sig.ident;
+    let block = &input.block;
+    let sig = &input.sig;
 
-    // Basic validation logic
-    if !input_str.contains("SELECT") {
-        panic!("Invalid SQL: Queries must start with SELECT!");
-    }
-
-    // Return the string as a literal so it can be assigned to a variable
-    let expanded = quote! { #input_str };
+    let expanded = quote! {
+        #sig {
+            println!("[{}] Calling function: {}", #target, stringify!(#name));
+            let result = { #block };
+            result
+        }
+    };
     TokenStream::from(expanded)
 }
