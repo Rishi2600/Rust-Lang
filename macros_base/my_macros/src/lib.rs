@@ -1,33 +1,16 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, ItemFn};
 
-#[proc_macro_attribute]
-pub fn log_call(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    // 1. Parse the function we're wrapping
-    let input = parse_macro_input!(item as ItemFn);
-    
-    // 2. Extract parts of the function
-    let name = &input.sig.ident;
-    let vis = &input.vis;
-    let sig = &input.sig;
-    let block = &input.block;
+#[proc_macro] // <--- This must be exactly this for sql_check!()
+pub fn sql_check(input: TokenStream) -> TokenStream {
+    let input_str = input.to_string();
 
-    // 3. Generate the "Wrapper"
-    // We recreate the function signature and put our logic inside
-    let expanded = quote! {
-        #vis #sig {
-            println!(">> Entering: {}", stringify!(#name));
-            
-            // Execute the original block of code
-            let result = { #block };
-            
-            println!("<< Exiting: {}", stringify!(#name));
-            
-            // Return the result of the block
-            result
-        }
-    };
+    // Basic validation logic
+    if !input_str.contains("SELECT") {
+        panic!("Invalid SQL: Queries must start with SELECT!");
+    }
 
+    // Return the string as a literal so it can be assigned to a variable
+    let expanded = quote! { #input_str };
     TokenStream::from(expanded)
 }
