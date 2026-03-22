@@ -1,0 +1,14 @@
+[package]
+name = "macros_base"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[workspace]
+
+# These must match the actual folder names inside macros_base
+members = [
+    "app",
+    "my_macros",
+]
