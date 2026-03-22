@@ -1,16 +1,26 @@
-use my_macros::log_with_target;
+use my_macros::JsonPlan;
 
-#[log_with_target("DATABASE")]
-fn save_user() {
-    println!("Saving to DB...");
+pub trait JsonPlan {
+    fn output_plan(&self);
 }
 
-#[log_with_target("NETWORK")]
-fn fetch_api() {
-    println!("Fetching from API...");
+#[derive(JsonPlan)]
+struct UserProfile {
+    #[rename("user_id")] // Our custom helper attribute
+    id: u32,
+    
+    username: String,
+    
+    #[rename("web_url")]
+    website: String,
 }
 
 fn main() {
-    save_user();
-    fetch_api();
+    let profile = UserProfile {
+        id: 1,
+        username: "Rustacean".into(),
+        website: "https://rust-lang.org".into(),
+    };
+
+    profile.output_plan();
 }
