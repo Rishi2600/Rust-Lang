@@ -1,21 +1,30 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input};
+use syn::{parse_macro_input, DeriveInput};
 
-#[proc_macro_attribute]
-pub fn time_it(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(item as syn::ItemFn);
-    let name = &input.sig.ident;
-    let block = &input.block;
-    let sig = &input.sig;
-    let vis = &input.vis;
+#[proc_macro_derive(Getters)]
+pub fn getters_derive(input: TokenStream) -> TokenStream {
+    let ast = parse_macro_input!(input as DeriveInput);
+    let name = &ast.ident;
+
+    let fields = if let syn::Data::Struct(syn::DataStruct { 
+        fields: syn::Fields::Named(ref fields), .. 
+    }) = ast.data { fields } else { panic!("Only named structs supported") };
+
+    // Create a getter for each field
+    let methods = fields.named.iter().map(|f| {
+        let field_name = &f.ident;
+        let field_type = &f.ty;
+        quote! {
+            pub fn #field_name(&self) -> &#field_type {
+                &self.#field_name
+            }
+        }
+    });
 
     let expanded = quote! {
-        #vis #sig {
-            let __start = ::std::time::Instant::now();
-            let __result = { #block };
-            println!("{} took {:?}", stringify!(#name), __start.elapsed());
-            __result
+        impl #name {
+            #(#methods)* // Expands the iterator into a list of methods
         }
     };
     TokenStream::from(expanded)
