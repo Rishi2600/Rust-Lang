@@ -1,32 +1,24 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput};
 
-#[proc_macro_derive(EnumStr)]
-pub fn enum_str_derive(input: TokenStream) -> TokenStream {
-    let ast = parse_macro_input!(input as DeriveInput);
-    let name = &ast.ident;
+#[proc_macro]
+pub fn require_envs(input: TokenStream) -> TokenStream {
+    // Convert the input tokens (e.g., "PORT", "DB_URL") into an iterator of strings
+    let envs: Vec<String> = input.to_string()
+        .split(',')
+        .map(|s| s.trim().replace("\"", ""))
+        .collect();
 
-    let variants = if let syn::Data::Enum(data) = ast.data {
-        data.variants
-    } else { panic!("EnumStr only works on Enums!"); };
-
-    // Map each variant to: Self::Variant => "Variant"
-    let match_arms = variants.iter().map(|v| {
-        let variant_name = &v.ident;
+    let checks = envs.iter().filter(|s| !s.is_empty()).map(|env| {
         quote! {
-            Self::#variant_name => stringify!(#variant_name)
+            if ::std::env::var(#env).is_err() {
+                panic!("🚨 CRITICAL: Missing required environment variable: {}", #env);
+            }
         }
     });
 
     let expanded = quote! {
-        impl #name {
-            pub fn as_str(&self) -> &'static str {
-                match self {
-                    #(#match_arms),*
-                }
-            }
-        }
+        { #(#checks)* }
     };
     TokenStream::from(expanded)
 }
