@@ -4,13 +4,14 @@ use syn::parse::{Parse, ParseStream};
 use syn::{parse_macro_input, token, Ident, LitStr, Result, Token};
 
 // 1. Define the recursive types
-enum HtmlNode {
-    Tag(HtmlTag),
-    Text(LitStr),
+struct HtmlAttr {
+    key: Ident,
+    value: LitStr,
 }
 
 struct HtmlTag {
     name: Ident,
+    attributes: Vec<HtmlAttr>, // New field!
     children: Vec<HtmlNode>,
 }
 
