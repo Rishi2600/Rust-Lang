@@ -30,6 +30,25 @@ impl Parse for HtmlNode {
 impl Parse for HtmlTag {
     fn parse(input: ParseStream) -> Result<Self> {
         let name: Ident = input.parse()?;
+
+        let mut attributes = Vec::new();
+        if input.peek(token::Paren) {
+            let attr_content;
+            syn::parenthesized!(attr_content in input);
+            
+            // Parse comma-separated key="value"
+            while !attr_content.is_empty() {
+                let key: Ident = attr_content.parse()?;
+                attr_content.parse::<Token![=]>()?;
+                let value: LitStr = attr_content.parse()?;
+                attributes.push(HtmlAttr { key, value });
+                
+                // If there's a comma, consume it
+                if attr_content.peek(Token![,]) {
+                    attr_content.parse::<Token![,]>()?;
+                }
+            }
+        }
         
         let content;
         syn::braced!(content in input);
