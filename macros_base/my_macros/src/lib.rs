@@ -1,29 +1,29 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, ItemFn};
+use syn::{parse_macro_input, DeriveInput};
 
-#[proc_macro_attribute]
-pub fn retry(attr: TokenStream, item: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(item as syn::ItemFn);
-    
-    // Parse the attribute arguments (e.g., #[retry(3)])
-    let retries: usize = attr.to_string().parse().unwrap_or(3); 
-    
-    let sig = &input.sig;
-    let block = &input.block;
+#[proc_macro_derive(EnumStr)]
+pub fn enum_str_derive(input: TokenStream) -> TokenStream {
+    let ast = parse_macro_input!(input as DeriveInput);
+    let name = &ast.ident;
+
+    let variants = if let syn::Data::Enum(data) = ast.data {
+        data.variants
+    } else { panic!("EnumStr only works on Enums!"); };
+
+    // Map each variant to: Self::Variant => "Variant"
+    let match_arms = variants.iter().map(|v| {
+        let variant_name = &v.ident;
+        quote! {
+            Self::#variant_name => stringify!(#variant_name)
+        }
+    });
 
     let expanded = quote! {
-        #sig {
-            let mut attempts = 0;
-            loop {
-                // Execute the block and match the Result
-                match (|| #block)() {
-                    Ok(val) => break Ok(val),
-                    Err(e) if attempts < #retries => {
-                        attempts += 1;
-                        println!("Retrying... (Attempt {})", attempts);
-                    },
-                    Err(e) => break Err(e),
+        impl #name {
+            pub fn as_str(&self) -> &'static str {
+                match self {
+                    #(#match_arms),*
                 }
             }
         }
