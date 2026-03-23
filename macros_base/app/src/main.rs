@@ -1,16 +1,15 @@
 use my_macros::html;
 
 fn main() {
-    let website = html!(
-        div {
-            h1 { "Welcome to my DSL" }
+    let page = html!(
+        div(class="container", id="main-wrapper") {
+            h1(style="color: blue") { "Hello Attributes!" }
             p {
-                "This is "
-                span { "nested" }
-                " content!"
+                "Check out this "
+                a(href="https://rust-lang.org") { "Link" }
             }
         }
     );
 
-    println!("{}", website);
+    println!("{}", page);
 }
