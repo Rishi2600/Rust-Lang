@@ -1,26 +1,19 @@
-use my_macros::JsonPlan;
+use my_macros::time_it;
 
-pub trait JsonPlan {
-    fn output_plan(&self);
+// 1. The function we want to measure
+#[time_it]
+fn heavy_computation() {
+    println!("Starting heavy work...");
+    std::thread::sleep(std::time::Duration::from_millis(50));
+    println!("Work finished!");
 }
 
-#[derive(JsonPlan)]
-struct UserProfile {
-    #[rename("user_id")] // Our custom helper attribute
-    id: u32,
-    
-    username: String,
-    
-    #[rename("web_url")]
-    website: String,
-}
-
+// 2. The MANDATORY entry point
 fn main() {
-    let profile = UserProfile {
-        id: 1,
-        username: "Rustacean".into(),
-        website: "https://rust-lang.org".into(),
-    };
-
-    profile.output_plan();
+    println!("--- Program Start ---");
+    
+    // Call the function that has our macro attached
+    heavy_computation();
+    
+    println!("--- Program End ---");
 }
