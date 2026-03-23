@@ -1,30 +1,31 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput};
+use syn::{parse_macro_input, ItemFn};
 
-#[proc_macro_derive(Getters)]
-pub fn getters_derive(input: TokenStream) -> TokenStream {
-    let ast = parse_macro_input!(input as DeriveInput);
-    let name = &ast.ident;
-
-    let fields = if let syn::Data::Struct(syn::DataStruct { 
-        fields: syn::Fields::Named(ref fields), .. 
-    }) = ast.data { fields } else { panic!("Only named structs supported") };
-
-    // Create a getter for each field
-    let methods = fields.named.iter().map(|f| {
-        let field_name = &f.ident;
-        let field_type = &f.ty;
-        quote! {
-            pub fn #field_name(&self) -> &#field_type {
-                &self.#field_name
-            }
-        }
-    });
+#[proc_macro_attribute]
+pub fn retry(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as syn::ItemFn);
+    
+    // Parse the attribute arguments (e.g., #[retry(3)])
+    let retries: usize = attr.to_string().parse().unwrap_or(3); 
+    
+    let sig = &input.sig;
+    let block = &input.block;
 
     let expanded = quote! {
-        impl #name {
-            #(#methods)* // Expands the iterator into a list of methods
+        #sig {
+            let mut attempts = 0;
+            loop {
+                // Execute the block and match the Result
+                match (|| #block)() {
+                    Ok(val) => break Ok(val),
+                    Err(e) if attempts < #retries => {
+                        attempts += 1;
+                        println!("Retrying... (Attempt {})", attempts);
+                    },
+                    Err(e) => break Err(e),
+                }
+            }
         }
     };
     TokenStream::from(expanded)
