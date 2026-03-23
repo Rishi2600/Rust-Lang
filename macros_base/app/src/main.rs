@@ -1,5 +1,8 @@
+use my_macros::html;
+
 fn main() {
-    // Will panic on startup if these aren't set in the environment
-    my_macros::require_envs!("DB_HOST", "API_KEY", "PORT");
-    println!("Server starting...");
+    // This looks like Rust, but it's our custom HTML language!
+    let page = html!(div { "Hello from the DSL!" });
+    
+    println!("Generated HTML: {}", page);
 }
