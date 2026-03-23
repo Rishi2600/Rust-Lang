@@ -12,7 +12,7 @@ pub fn require_envs(input: TokenStream) -> TokenStream {
     let checks = envs.iter().filter(|s| !s.is_empty()).map(|env| {
         quote! {
             if ::std::env::var(#env).is_err() {
-                panic!("🚨 CRITICAL: Missing required environment variable: {}", #env);
+                panic!("CRITICAL: Missing required environment variable: {}", #env);
             }
         }
     });
