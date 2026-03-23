@@ -14,7 +14,7 @@ pub fn time_it(_attr: TokenStream, item: TokenStream) -> TokenStream {
         #vis #sig {
             let __start = ::std::time::Instant::now();
             let __result = { #block };
-            println!("⏱️ {} took {:?}", stringify!(#name), __start.elapsed());
+            println!("{} took {:?}", stringify!(#name), __start.elapsed());
             __result
         }
     };
