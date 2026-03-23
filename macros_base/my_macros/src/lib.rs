@@ -77,15 +77,21 @@ fn generate_node_code(node: &HtmlNode) -> proc_macro2::TokenStream {
         HtmlNode::Text(lit) => quote! { #lit.to_string() },
         HtmlNode::Tag(tag) => {
             let name_str = tag.name.to_string();
-            let child_codes: Vec<_> = tag.children.iter().map(generate_node_code).collect();
             
-            // Generate a string like "{}{}{}" based on child count
+            // Generate the attribute string: ' class="foo" id="bar"'
+            let mut attr_str = String::new();
+            for attr in &tag.attributes {
+                attr_str.push_str(&format!(" {}=\"{}\"", attr.key, attr.value.value()));
+            }
+
+            let child_codes: Vec<_> = tag.children.iter().map(generate_node_code).collect();
             let placeholders = "{}".repeat(child_codes.len());
             
             quote! {
                 format!(
-                    "<{0}>{1}</{0}>", 
+                    "<{0}{1}>{2}</{0}>", 
                     #name_str, 
+                    #attr_str,
                     format!(#placeholders, #(#child_codes),*)
                 )
             }
