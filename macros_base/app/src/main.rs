@@ -3,13 +3,15 @@ use my_macros::AutoCli;
 #[derive(AutoCli)]
 struct Config {
     name: String,
-    port: u16,
+    port: Option<u16>, // Must be exactly Option<u16>
 }
 
 fn main() {
-    // Run this using: cargo run -p app -- --name Rishi --port 3000
     let config = Config::parse();
-    
-    println!("Config Loaded!");
-    println!("User: {}, Port: {}", config.name, config.port);
+    println!("User: {}", config.name);
+    if let Some(p) = config.port {
+        println!("Port: {}", p);
+    } else {
+        println!("Port: Default (80)");
+    }
 }
