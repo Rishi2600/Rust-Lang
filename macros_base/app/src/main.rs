@@ -1,24 +1,18 @@
 use my_macros::SqlTable;
 
-// Example 1: Uses the attribute to specify the table name
-#[derive(SqlTable)]
-#[table("web_users")]
+#[derive(SqlTable, Debug)] // Added Debug so format!("{:?}") works
+#[table("users")]
 struct User {
     id: i32,
-    username: String,
-}
-
-// Example 2: No attribute, so it will default to "product"
-#[derive(SqlTable)]
-struct Product {
     name: String,
-    price: f64,
 }
 
 fn main() {
-    println!("--- SQL MAPPER ---");
+    let u = User { id: 42, name: "Rishi".to_string() };
+
+    println!("Query:  {}", User::insert_sql());
+    println!("Values: {:?}", u.values());
     
-    // Call the generated methods
-    println!("User SQL:    {}", User::insert_sql());
-    println!("Product SQL: {}", Product::insert_sql());
+    // Pro move: Combine them!
+    println!("\nExecuting: {} with params {:?}", User::insert_sql(), u.values());
 }
