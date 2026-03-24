@@ -1,24 +1,17 @@
-use my_macros::AutoCli;
+use my_macros::inject_db;
 
-#[derive(AutoCli)]
-struct Config {
-    #[arg(short = "n")]
-    name: String,
-    
-    #[arg(short = "p")]
-    port: Option<u16>,
-
-    #[arg(short = "v")]
-    verbose: bool,
+#[inject_db]
+fn get_users(db: &Database) {
+    // This code 'sees' the db variable because the macro 
+    // wrapped this block in a scope where 'db' exists!
+    db.query("SELECT * FROM users");
 }
 
 fn main() {
-    let config = Config::parse();
+    println!("--- Starting DI Project ---");
     
-    if config.verbose {
-        println!("--- DEBUG MODE ENABLED ---");
-    }
+    // Call it with no arguments!
+    get_users();
     
-    println!("User: {}", config.name);
-    println!("Port: {}", config.port.unwrap_or(80));
+    println!("--- DI Project Finished ---");
 }
