@@ -1,18 +1,15 @@
-use my_macros::SqlTable;
+use my_macros::AutoCli;
 
-#[derive(SqlTable, Debug)] // Added Debug so format!("{:?}") works
-#[table("users")]
-struct User {
-    id: i32,
+#[derive(AutoCli)]
+struct Config {
     name: String,
+    port: u16,
 }
 
 fn main() {
-    let u = User { id: 42, name: "Rishi".to_string() };
-
-    println!("Query:  {}", User::insert_sql());
-    println!("Values: {:?}", u.values());
+    // Run this using: cargo run -p app -- --name Rishi --port 3000
+    let config = Config::parse();
     
-    // Pro move: Combine them!
-    println!("\nExecuting: {} with params {:?}", User::insert_sql(), u.values());
+    println!("Config Loaded!");
+    println!("User: {}, Port: {}", config.name, config.port);
 }
