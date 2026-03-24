@@ -2,16 +2,23 @@ use my_macros::AutoCli;
 
 #[derive(AutoCli)]
 struct Config {
+    #[arg(short = "n")]
     name: String,
-    port: Option<u16>, // Must be exactly Option<u16>
+    
+    #[arg(short = "p")]
+    port: Option<u16>,
+
+    #[arg(short = "v")]
+    verbose: bool,
 }
 
 fn main() {
     let config = Config::parse();
-    println!("User: {}", config.name);
-    if let Some(p) = config.port {
-        println!("Port: {}", p);
-    } else {
-        println!("Port: Default (80)");
+    
+    if config.verbose {
+        println!("--- DEBUG MODE ENABLED ---");
     }
+    
+    println!("User: {}", config.name);
+    println!("Port: {}", config.port.unwrap_or(80));
 }
