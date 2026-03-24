@@ -17,23 +17,32 @@ pub fn auto_cli_derive(input: TokenStream) -> TokenStream {
 
     // We'll generate a piece of parsing logic for EVERY field
     let field_parsers = fields.iter().map(|f| {
-        let name = &f.ident;
-        let name_str = name.as_ref().unwrap().to_string();
-        
-        // Default "long" flag is just the field name (e.g., --name)
-        let mut long_flag = format!("--{}", name_str);
-        
-        // Check if user provided a custom long/short name in #[arg(...)]
-        // (For brevity in this 'Hard' start, we'll assume the flags match field names)
-        
+    let name = &f.ident;
+    let name_str = name.as_ref().unwrap().to_string();
+    let long_flag = format!("--{}", name_str);
+    
+    // Check if the type name contains "Option"
+    let type_str = quote!(#f.ty).to_string();
+    let is_option = type_str.contains("Option");
+
+    if is_option {
         quote! {
             let #name = std::env::args()
                 .enumerate()
                 .find(|(_, arg)| arg == #long_flag)
                 .and_then(|(i, _)| std::env::args().nth(i + 1))
-                .expect(&format!("Missing required argument: {}", #long_flag))
-                .parse()
-                .expect(&format!("Failed to parse argument: {}", #long_flag));
+                .and_then(|val| val.parse().ok()); // Returns None if missing or parse fails
+            }
+        } else {
+            quote! {
+                let #name = std::env::args()
+                    .enumerate()
+                    .find(|(_, arg)| arg == #long_flag)
+                    .and_then(|(i, _)| std::env::args().nth(i + 1))
+                    .expect(&format!("Missing required argument: {}", #long_flag))
+                    .parse()
+                    .expect(&format!("Failed to parse argument: {}", #long_flag));
+            }
         }
     });
 
