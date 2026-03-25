@@ -1,20 +1,11 @@
-use my_macros::inject_db;
+use my_macros::trace;
 
-#[inject_db("postgres://production-db:5432")]
-fn sync_prod(db: &Database) {
-    db.query("SELECT * FROM users");
-}
-
-#[inject_db("sqlite://local.db")]
-fn sync_local(db: &Database) {
-    db.query("INSERT INTO logs VALUES ('sync_started')");
+#[trace]
+fn add_numbers(a: i32, b: i32) -> i32 {
+    a + b
 }
 
 fn main() {
-    println!("Starting Multi-DB Sync...");
-    
-    sync_prod();
-    sync_local();
-    
-    println!("Sync Complete.");
+    let sum = add_numbers(5, 10);
+    println!("The result is: {}", sum);
 }
