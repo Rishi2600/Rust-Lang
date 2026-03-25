@@ -1,44 +1,26 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, ItemFn, LitStr};
+use syn::{parse_macro_input, ItemFn};
 
 #[proc_macro_attribute]
-pub fn inject_db(attr: TokenStream, item: TokenStream) -> TokenStream {
-    // 1. NEW: Parse the attribute argument (the URL string)
-    let db_url = parse_macro_input!(attr as LitStr);
-
-    // 2. Parse the function
+pub fn trace(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let input_fn = parse_macro_input!(item as ItemFn);
+    
     let fn_name = &input_fn.sig.ident;
     let fn_vis = &input_fn.vis;
+    let fn_args = &input_fn.sig.inputs;
     let fn_block = &input_fn.block;
+    let fn_ret = &input_fn.sig.output;
 
-    // 3. Reconstruct with the dynamic URL
     let expanded = quote! {
-        #fn_vis fn #fn_name() {
-            // Internal Helper Struct
-            struct Database {
-                url: String,
-            }
-            impl Database {
-                fn query(&self, sql: &str) {
-                    println!("--- DI LOGGER ---");
-                    println!("Target: {}", self.url);
-                    println!("SQL:    {}", sql);
-                }
-            }
-
-            // Injected using the macro argument!
-            let db = Database { 
-                url: #db_url.into() 
-            };
-
-            // Execute original code
-            let original_logic = || {
-                #fn_block
-            };
+        #fn_vis fn #fn_name(#fn_args) #fn_ret {
+            println!("[TRACE] Entering {}...", stringify!(#fn_name));
             
-            original_logic();
+            // We use a block to capture the return value if there is one
+            let result = (|| #fn_block)();
+            
+            println!("[TRACE] Exiting {}...", stringify!(#fn_name));
+            result
         }
     };
 
