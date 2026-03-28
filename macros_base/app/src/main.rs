@@ -8,7 +8,7 @@ fn user_profile(user_id: i32) -> String {
     // Imagine this used our HTML DSL Project
     format!(
         "<h1>Profile for User #{}</h1><p>Username: {}</p>", 
-        user_id, username
+        username, username
     )
 }
 
