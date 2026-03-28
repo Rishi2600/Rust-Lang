@@ -1,13 +1,15 @@
 fn main() {
-    let s1 = String::from("Library Book");
+    let mut document = String::from("Draft 1");
 
-    // We pass a reference (&), not the value itself
-    print_length(&s1); 
-
-    // s1 still owns the data, so we can use it here!
-    println!("I still have the '{}'", s1);
-}
-
-fn print_length(s: &String) {
-    println!("The book is {} chars long", s.len());
+    let reader1 = &document;
+    let reader2 = &document; // ✅ Fine: multiple readers
+    
+    // let writer = &mut document; // ❌ ERROR: Cannot edit while readers are looking
+    
+    println!("Readers see: {} and {}", reader1, reader2);
+    
+    // Now that readers are "done" (out of scope), we can edit
+    let writer = &mut document;
+    writer.push_str(" - Final Version");
+    println!("{}", writer);
 }
