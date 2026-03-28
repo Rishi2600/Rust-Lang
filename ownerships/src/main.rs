@@ -4,6 +4,6 @@ fn main() {
     // Ownership of the data MOVES from s1 to s2
     let s2 = s1; 
 
-    // println!("{}", s1); // ❌ ERROR: s1 is now "empty" (invalid)
+    // println!("{}", s1); 
     println!("{}", s2);    
 }
