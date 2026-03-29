@@ -1,12 +1,14 @@
+use std::cell::RefCell;
+
 fn main() {
-    let mut mana = 100;
+    // This variable is NOT 'mut'!
+    let secret_box = RefCell::new(50);
 
-    // This closure BORROWS mana mutably
-    let mut cast_spell = || {
-        mana -= 10;
-        println!("Cast! Mana left: {}", mana);
-    };
+    {
+        // We can borrow it mutably even though the variable isn't mut!
+        let mut val = secret_box.borrow_mut();
+        *val += 10;
+    } // Mutable borrow ends here
 
-    cast_spell();
-    let _cast_spell = move || println!("Mana was {}", mana);
+    println!("Value is now: {:?}", secret_box.borrow());
 }
