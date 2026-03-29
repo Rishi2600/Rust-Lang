@@ -1,11 +1,44 @@
-use std::rc::Rc;
+use std::sync::{Arc, Mutex};
+use std::thread;
+
+struct Spell<'a> {
+    name: &'a str, // Level 4: Lifetime 'a (The spell name lives as long as the string literal)
+}
 
 fn main() {
-    let scroll = Rc::new(String::from("Forbidden Knowledge"));
+    // Level 8: Arc (Atomic Reference Counting) - Multiple owners across threads
+    // Level 7: Mutex (Mutual Exclusion) - Interior mutability that is thread-safe
+    let reactor_core = Arc::new(Mutex::new(100)); 
+    
+    let incantation = Spell { name: "Fireball" };
+    let mut wizards = vec![];
 
-    let apprentice_a = Rc::clone(&scroll); // Increases count to 2
-    let _apprentice_b = Rc::clone(&scroll); // Increases count to 3
+    for i in 0..3 {
+        // Clone the Arc, not the data. We now have 4 "owners" of the same Mutex.
+        let core_ref = Arc::clone(&reactor_core);
+        
+        // Level 6: The 'move' Closure. We move 'core_ref' into the thread.
+        let handle = thread::spawn(move || {
+            // Level 3 & 7: Lock the Mutex to get a mutable reference (&mut)
+            let mut mana = core_ref.lock().unwrap();
+            
+            if *mana >= 20 {
+                *mana -= 20;
+                println!("Wizard {} cast {}! Core Mana: {}", i, incantation.name, *mana);
+            } else {
+                println!("Wizard {} failed! Not enough mana.", i);
+            }
+            // Mana is automatically unlocked here when the Guard goes out of scope.
+        });
+        
+        wizards.push(handle);
+    }
 
-    println!("Apprentice A reads: {}", apprentice_a);
-    println!("Owners count: {}", Rc::strong_count(&scroll));
-} // Count drops as apprentices go out of scope. Data dies at count 0.
+    // Wait for all wizards to finish
+    for wizard in wizards {
+        wizard.join().unwrap();
+    }
+
+    // Final check of the owner count
+    println!("Reactor stabilized. Final Mana: {}", reactor_core.lock().unwrap());
+}
