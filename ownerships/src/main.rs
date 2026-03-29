@@ -8,5 +8,5 @@ fn main() {
     };
 
     cast_spell();
-    // println!("{}", mana);
+    let _cast_spell = move || println!("Mana was {}", mana);
 }
