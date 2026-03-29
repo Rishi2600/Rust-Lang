@@ -1,17 +1,12 @@
-struct Golem {
-    name: String,
-    power_source: String,
-}
-
 fn main() {
-    let my_golem = Golem {
-        name: String::from("Stone Sentinel"),
-        power_source: String::from("Ancient Battery"),
+    let mut mana = 100;
+
+    // This closure BORROWS mana mutably
+    let mut cast_spell = || {
+        mana -= 10;
+        println!("Cast! Mana left: {}", mana);
     };
 
-    // We MOVE the name out, but leave the power_source
-    let _name_only = my_golem.name;
-
-    // println!("{}", my_golem.name);
-    println!("Power source still here: {}", my_golem.power_source);
+    cast_spell();
+    // println!("{}", mana);
 }
