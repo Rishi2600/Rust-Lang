@@ -1,14 +1,11 @@
-use std::cell::RefCell;
+use std::rc::Rc;
 
 fn main() {
-    // This variable is NOT 'mut'!
-    let secret_box = RefCell::new(50);
+    let scroll = Rc::new(String::from("Forbidden Knowledge"));
 
-    {
-        // We can borrow it mutably even though the variable isn't mut!
-        let mut val = secret_box.borrow_mut();
-        *val += 10;
-    } // Mutable borrow ends here
+    let apprentice_a = Rc::clone(&scroll); // Increases count to 2
+    let _apprentice_b = Rc::clone(&scroll); // Increases count to 3
 
-    println!("Value is now: {:?}", secret_box.borrow());
-}
+    println!("Apprentice A reads: {}", apprentice_a);
+    println!("Owners count: {}", Rc::strong_count(&scroll));
+} // Count drops as apprentices go out of scope. Data dies at count 0.
