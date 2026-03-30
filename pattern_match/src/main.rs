@@ -1,10 +1,9 @@
 fn main() {
-    let temperature = 35;
+    let some_option = Some("Golden Idol");
 
-    match temperature {
-        t if t > 40 => println!("Dangerously hot!"), // Guard
-        30..=40 => println!("Beach weather."),       // Range
-        15..=29 => println!("Perfect."),
-        _ => println!("Too cold."),                  // The "Catch-all" (_)
-    }
+    // "If this matches Some(x), bind x and run this block"
+    if let Some(treasure) = some_option {
+        println!("Found the {}!", treasure);
+    } 
+    // No need to handle 'None' if we don't want to.
 }
