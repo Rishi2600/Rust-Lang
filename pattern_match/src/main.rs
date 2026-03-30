@@ -1,9 +1,8 @@
 fn main() {
-    let some_option = Some("Golden Idol");
+    let coordinates = vec![(0, 0), (10, 5), (20, 10)];
 
-    // "If this matches Some(x), bind x and run this block"
-    if let Some(treasure) = some_option {
-        println!("Found the {}!", treasure);
-    } 
-    // No need to handle 'None' if we don't want to.
+    // Destructuring the tuple right in the loop signature
+    for (x, y) in coordinates {
+        println!("Point is at {}, {}", x, y);
+    }
 }
