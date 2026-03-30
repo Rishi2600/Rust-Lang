@@ -1,15 +1,10 @@
-enum Message {
-    Quit,
-    Move { x: i32, y: i32 },
-    Write(String),
-}
-
 fn main() {
-    let msg = Message::Move { x: 10, y: 20 };
+    let temperature = 35;
 
-    match msg {
-        Message::Quit => println!("Shutting down..."),
-        Message::Write(text) => println!("Text: {}", text),
-        Message::Move { x, y } => println!("Moving to x: {}, y: {}", x, y),
+    match temperature {
+        t if t > 40 => println!("Dangerously hot!"), // Guard
+        30..=40 => println!("Beach weather."),       // Range
+        15..=29 => println!("Perfect."),
+        _ => println!("Too cold."),                  // The "Catch-all" (_)
     }
 }
