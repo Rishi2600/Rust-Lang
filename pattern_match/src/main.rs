@@ -1,18 +1,15 @@
-fn main() {
-    println!("Hello, world!");
-}
-enum Portal {
-    Fire,
-    Ice,
-    Void,
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
 }
 
 fn main() {
-    let destination = Portal::Ice;
+    let msg = Message::Move { x: 10, y: 20 };
 
-    match destination {
-        Portal::Fire => println!("Bring a fan."),
-        Portal::Ice => println!("Bring a coat."),
-        Portal::Void => println!("Bring... nothing?"), // Must cover all cases!
+    match msg {
+        Message::Quit => println!("Shutting down..."),
+        Message::Write(text) => println!("Text: {}", text),
+        Message::Move { x, y } => println!("Moving to x: {}, y: {}", x, y),
     }
 }
