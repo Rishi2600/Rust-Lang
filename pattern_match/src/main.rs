@@ -1,21 +1,11 @@
-struct Account {
-    status: Status,
-}
-
-enum Status {
-    Active(u32), // Credits remaining
-    Suspended,
-}
-
 fn main() {
-    let user_account = Some(Account { status: Status::Active(100) });
+    let system_power = true;
+    let authorization_level = 10;
 
-    // We "dig" through the Option, then the Struct, then the Enum
-    match user_account {
-        Some(Account { status: Status::Active(amount) }) if amount > 50 => {
-            println!("User is wealthy with {} credits!", amount);
-        }
-        Some(Account { status: Status::Suspended }) => println!("Access denied."),
-        _ => println!("No account found or low balance."),
+    // We match on the PAIR of values
+    match (system_power, authorization_level) {
+        (true, 10) => println!("Full Access: Critical Systems Online."),
+        (true, _)  => println!("Limited Access: Systems Online."),
+        (false, _) => println!("Systems Offline. Emergency power only."),
     }
 }
