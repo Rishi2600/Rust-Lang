@@ -1,19 +1,9 @@
-enum Robot {
-    Worker { id: u32, task: String },
-}
-
 fn main() {
-    let bot = Robot::Worker { id: 777, task: String::from("Welding") };
+    let hand = [10, 2, 5, 8, 10];
 
-    match bot {
-        // 'entire_bot' binds to the whole Worker, while 'id' binds to the 777
-        entire_bot @ Robot::Worker { id: 700..=800, .. } => {
-            println!("Bot in the 700-series detected!");
-            // We can still use 'entire_bot' here as the full object
-            inspect_robot(entire_bot); 
-        }
-        _ => (),
+    match hand {
+        [10, .., 10] => println!("A pair of tens at the ends!"),
+        [first, second, ..] => println!("Started with {} and {}", first, second),
+        [] => println!("Empty hand."),
     }
 }
-
-fn inspect_robot(r: Robot) { /* ... */ }
