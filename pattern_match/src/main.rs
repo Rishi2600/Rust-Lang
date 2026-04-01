@@ -1,19 +1,9 @@
 fn main() {
-    let sequence = [1, 2, 3, 4, 5];
+    let data = vec![Some(10), None, Some(20), Some(30), None];
 
-    match sequence {
-        // Capture the first, capture the last, and ignore the middle
-        [first, .., last] => {
-            println!("The bridge starts at {} and ends at {}", first, last);
-        }
-    }
-    
-    let path = ["home", "user", "documents", "secret.txt"];
-    match path {
-        // Match the directory structure and the filename separately
-        [dirs @ .., filename] => {
-            println!("Filename: {}", filename);
-            println!("Full directory path: {:?}", dirs);
-        }
-    }
+    // .flatten() essentially pattern matches under the hood!
+    // It looks for Some(x) and discards None.
+    let numbers: Vec<i32> = data.into_iter().flatten().collect();
+
+    println!("Only the 'Some' values: {:?}", numbers);
 }
