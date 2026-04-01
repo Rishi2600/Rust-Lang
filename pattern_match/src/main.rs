@@ -1,15 +1,20 @@
+enum ServerError {
+    Timeout(u32),
+    ConnectionLost,
+    AuthFailed,
+    Maintenance(String),
+}
+
 fn main() {
-    let mut name = Some(String::from("Rishi"));
+    let status = ServerError::Timeout(500);
 
-    match name {
-        // 'ref mut n' says: "Don't move the string, just give me a mutable pointer to it"
-        Some(ref mut n) => {
-            n.push_str(" the Architect");
-            println!("Modified: {}", n);
-        },
-        None => (),
+    match status {
+        // Multiple patterns, one result
+        ServerError::Timeout(_) | ServerError::ConnectionLost => {
+            println!("Retrying connection...");
+        }
+        ServerError::AuthFailed | ServerError::Maintenance(_) => {
+            println!("Please log in again later.");
+        }
     }
-
-    // Because we used 'ref mut', 'name' is still valid here!
-    println!("Original is still alive: {:?}", name);
 }
