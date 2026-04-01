@@ -1,20 +1,19 @@
-enum ServerError {
-    Timeout(u32),
-    ConnectionLost,
-    AuthFailed,
-    Maintenance(String),
-}
-
 fn main() {
-    let status = ServerError::Timeout(500);
+    let sequence = [1, 2, 3, 4, 5];
 
-    match status {
-        // Multiple patterns, one result
-        ServerError::Timeout(_) | ServerError::ConnectionLost => {
-            println!("Retrying connection...");
+    match sequence {
+        // Capture the first, capture the last, and ignore the middle
+        [first, .., last] => {
+            println!("The bridge starts at {} and ends at {}", first, last);
         }
-        ServerError::AuthFailed | ServerError::Maintenance(_) => {
-            println!("Please log in again later.");
+    }
+    
+    let path = ["home", "user", "documents", "secret.txt"];
+    match path {
+        // Match the directory structure and the filename separately
+        [dirs @ .., filename] => {
+            println!("Filename: {}", filename);
+            println!("Full directory path: {:?}", dirs);
         }
     }
 }
