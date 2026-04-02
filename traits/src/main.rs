@@ -1,11 +1,9 @@
-#[derive(Debug)] // This trait lets us print the struct with {:?}
 struct GameConfig {
     resolution: (u32, u32),
     difficulty: String,
     fullscreen: bool,
 }
 
-// Implementing the 'Default' trait
 impl Default for GameConfig {
     fn default() -> Self {
         Self {
@@ -17,16 +15,9 @@ impl Default for GameConfig {
 }
 
 fn main() {
-    // 1. Create a totally default config
-    let basic_config = GameConfig::default();
-    
-    // 2. The "Splat" (Struct Update Syntax)
-    // We only change the difficulty; the rest is copied from Default
+    // Superpower: "Give me the default, but change the difficulty"
     let hard_mode = GameConfig {
         difficulty: "Hard".to_string(),
-        ..Default::default() 
+        ..Default::default() // The "Splat" operator works with traits!
     };
-
-    println!("Standard: {:?}", basic_config);
-    println!("Hard Mode: {:?}", hard_mode);
 }
