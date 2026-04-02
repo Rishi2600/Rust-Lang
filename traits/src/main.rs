@@ -1,23 +1,16 @@
-struct GameConfig {
-    resolution: (u32, u32),
-    difficulty: String,
-    fullscreen: bool,
-}
+struct Seconds(u32);
+struct Minutes(u32);
 
-impl Default for GameConfig {
-    fn default() -> Self {
-        Self {
-            resolution: (1920, 1080),
-            difficulty: "Normal".to_string(),
-            fullscreen: true,
-        }
+impl From<Minutes> for Seconds {
+    fn from(m: Minutes) -> Self {
+        Seconds(m.0 * 60)
     }
 }
 
 fn main() {
-    // Superpower: "Give me the default, but change the difficulty"
-    let hard_mode = GameConfig {
-        difficulty: "Hard".to_string(),
-        ..Default::default() // The "Splat" operator works with traits!
-    };
+    let mins = Minutes(5);
+    
+    // We can use .into() because we implemented From!
+    let secs: Seconds = mins.into(); 
+    println!("Total seconds: {}", secs.0);
 }
