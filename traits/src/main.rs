@@ -1,12 +1,21 @@
+trait Animal {
+    fn noise(&self);
+}
+
+struct Dog;
+struct Cat;
+
+impl Animal for Dog { fn noise(&self) { println!("Woof"); } }
+impl Animal for Cat { fn noise(&self) { println!("Meow"); } }
+
 fn main() {
-    let numbers = vec![1, 2, 3, 4, 5];
+    // A list of different types that all follow the Animal contract
+    let zoo: Vec<Box<dyn Animal>> = vec![
+        Box::new(Dog),
+        Box::new(Cat),
+    ];
 
-    // This "Lazy" chain does nothing until .collect() is called
-    let result: Vec<i32> = numbers.into_iter()
-        .filter(|x| x % 2 != 0) // Keep odds
-        .map(|x| x * x)         // Square them
-        .take(2)                // Only take the first two
-        .collect();             // Turn back into a Vec
-
-    println!("{:?}", result); // [1, 9]
+    for animal in zoo {
+        animal.noise();
+    }
 }
