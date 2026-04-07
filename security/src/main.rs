@@ -1,15 +1,18 @@
-use std::collections::HashMap;
+fn divide(numerator: f64, denominator: f64) -> Option<f64> {
+    if denominator == 0.0 {
+        None
+    } else {
+        Some(numerator / denominator)
+    }
+}
 
 fn main() {
-    let mut scores = HashMap::new();
-    let text = "apple banana apple orange apple banana";
+    let result = divide(10.0, 2.0);
 
-    for word in text.split_whitespace() {
-        // .entry() returns an Enum! 
-        // If it's Vacant, it inserts 0. Then it returns a mutable reference to the value.
-        let count = scores.entry(word).or_insert(0);
-        *count += 1;
-    }
+    // Superpower: Combinators (.map, .and_then, .unwrap_or)
+    let display = result
+        .map(|n| n * 2.0)
+        .unwrap_or(0.0);
 
-    println!("{:?}", scores); // {"apple": 3, "banana": 2, "orange": 1}
+    println!("Result: {}", display);
 }
