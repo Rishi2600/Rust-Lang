@@ -1,14 +1,16 @@
-use std::sync::Arc;
+use std::sync::mpsc;
 use std::thread;
 
 fn main() {
-    // We wrap a large string in an Arc
-    let shared_data = Arc::new(String::from("Massive Database Record"));
+    // tx = transmitter, rx = receiver
+    let (tx, rx) = mpsc::channel();
 
-    for i in 0..5 {
-        let data_ref = Arc::clone(&shared_data);
-        thread::spawn(move || {
-            println!("Thread {} is reading: {}", i, data_ref);
-        });
-    }
+    thread::spawn(move || {
+        let val = String::from("Secret Message");
+        tx.send(val).unwrap(); 
+        // val is MOVED here; the thread can no longer use it!
+    });
+
+    let received = rx.recv().unwrap();
+    println!("Got: {}", received);
 }
