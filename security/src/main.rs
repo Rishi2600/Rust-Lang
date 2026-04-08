@@ -1,16 +1,11 @@
-use std::sync::mpsc;
-use std::thread;
+use std::borrow::Cow;
 
-fn main() {
-    // tx = transmitter, rx = receiver
-    let (tx, rx) = mpsc::channel();
-
-    thread::spawn(move || {
-        let val = String::from("Secret Message");
-        tx.send(val).unwrap(); 
-        // val is MOVED here; the thread can no longer use it!
-    });
-
-    let received = rx.recv().unwrap();
-    println!("Got: {}", received);
+fn filter_profanity(input: &str) -> Cow<str> {
+    if input.contains("bad_word") {
+        // We MUST allocate a new string to change it
+        Cow::Owned(input.replace("bad_word", "***"))
+    } else {
+        // No bad words? Just return the reference we were given! No allocation.
+        Cow::Borrowed(input)
+    }
 }
