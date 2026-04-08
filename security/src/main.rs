@@ -1,11 +1,11 @@
-use std::borrow::Cow;
+use std::mem;
 
-fn filter_profanity(input: &str) -> Cow<str> {
-    if input.contains("bad_word") {
-        // We MUST allocate a new string to change it
-        Cow::Owned(input.replace("bad_word", "***"))
-    } else {
-        // No bad words? Just return the reference we were given! No allocation.
-        Cow::Borrowed(input)
-    }
+fn main() {
+    let mut x = String::from("Alice");
+    let mut y = String::from("Bob");
+
+    // Swaps the contents of two memory locations without reallocating
+    mem::swap(&mut x, &mut y);
+
+    println!("x: {}, y: {}", x, y); // x: Bob, y: Alice
 }
