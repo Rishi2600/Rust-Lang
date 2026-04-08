@@ -1,21 +1,14 @@
-trait Drawable {
-    fn draw(&self);
-}
-
-struct Circle;
-struct Square;
-
-impl Drawable for Circle { fn draw(&self) { println!("◯"); } }
-impl Drawable for Square { fn draw(&self) { println!("□"); } }
+use std::sync::Arc;
+use std::thread;
 
 fn main() {
-    // We store different types in one Vec using "Dynamic Dispatch"
-    let shapes: Vec<Box<dyn Drawable>> = vec![
-        Box::new(Circle),
-        Box::new(Square),
-    ];
+    // We wrap a large string in an Arc
+    let shared_data = Arc::new(String::from("Massive Database Record"));
 
-    for shape in shapes {
-        shape.draw();
+    for i in 0..5 {
+        let data_ref = Arc::clone(&shared_data);
+        thread::spawn(move || {
+            println!("Thread {} is reading: {}", i, data_ref);
+        });
     }
 }
