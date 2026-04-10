@@ -4,37 +4,54 @@ mod commands;
 use robot::Robot;
 use commands::{Action, MoveForward, Speak};
 
-// The Macro: It recursively parses the DSL into Boxed Trait Objects
+/// This macro translates our custom DSL into Rust code.
+/// We pass the identifier `queue` as the first argument to overcome "Macro Hygiene,"
+/// allowing the macro to access the local variable in main's scope.
 macro_rules! robot_program {
-    // Match 'move_forward'
-    (move_forward $dist:expr; $($rest:tt)*) => {
-        queue.push(Box::new(MoveForward($dist)));
-        robot_program!($($rest)*);
+    // Case: move_forward
+    ($target:ident; move_forward $dist:expr; $($rest:tt)*) => {
+        $target.push(Box::new(MoveForward($dist)));
+        robot_program!($target; $($rest)*);
     };
-    // Match 'speak'
-    (speak $msg:expr; $($rest:tt)*) => {
-        queue.push(Box::new(Speak($msg.to_string())));
-        robot_program!($($rest)*);
+    
+    // Case: speak
+    ($target:ident; speak $msg:expr; $($rest:tt)*) => {
+        $target.push(Box::new(Speak($msg.to_string())));
+        robot_program!($target; $($rest)*);
     };
-    // Base case: No more commands
-    () => {};
+
+    // Base Case: Ends the recursion when no tokens are left
+    ($target:ident;) => {};
 }
 
 fn main() {
+    // 1. Initialize our robot state
     let mut r2d2 = Robot::new("R2-D2");
+
+    // 2. Create a collection of Trait Objects (Box<dyn Action>)
+    // This allows us to store different types (Move and Speak) in one list.
     let mut queue: Vec<Box<dyn Action>> = Vec::new();
 
-    // Using our custom DSL!
+    // 3. Use the Macro DSL to populate the queue
+    // Note: We MUST end each command with a semicolon as per our macro rules
     robot_program! {
+        queue; 
         move_forward 10;
         speak "Beep Boop!";
         move_forward 5;
+        speak "Objective complete.";
     }
 
-    // Execute the compiled queue
+    println!("--- Starting Robot Execution ---");
+
+    // 4. Iterate and execute the commands
+    // This is 'Dynamic Dispatch' in action!
     for cmd in queue {
         cmd.execute(&mut r2d2);
     }
 
+    println!("--- Execution Finished ---");
+
+    // 5. Check final state
     r2d2.status();
 }
