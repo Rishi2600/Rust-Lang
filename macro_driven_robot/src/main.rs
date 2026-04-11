@@ -25,7 +25,7 @@ macro_rules! robot_program {
 }
 
 fn main() {
-    // 1. Initialize our robot state
+    // 1. Initialize our robot 
     let mut r2d2 = Robot::new("R2-D2");
 
     // 2. Create a collection of Trait Objects (Box<dyn Action>)
