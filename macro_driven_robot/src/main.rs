@@ -4,9 +4,7 @@ mod commands;
 use robot::Robot;
 use commands::{Action, MoveForward, Speak};
 
-/// This macro translates our custom DSL into Rust code.
-/// We pass the identifier `queue` as the first argument to overcome "Macro Hygiene,"
-/// allowing the macro to access the local variable in main's scope.
+
 macro_rules! robot_program {
     // Case: move_forward
     ($target:ident; move_forward $dist:expr; $($rest:tt)*) => {
