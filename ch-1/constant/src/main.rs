@@ -1,18 +1,20 @@
-enum ConnectionState {
-    Disconnected,
-    Connecting(u32), // Attempt count
-    Connected { session_id: String, ip: String },
-    Failed(String),  // Error message
+trait Logger {
+    fn log(&self, message: &str);
 }
 
-fn handle_state(state: &ConnectionState) {
-    match state {
-        ConnectionState::Connected { session_id, .. } => {
-            println!("Logged in as {}", session_id);
-        }
-        ConnectionState::Connecting(attempt) if *attempt > 3 => {
-            println!("Connection is taking a while (Attempt {})...", attempt);
-        }
-        _ => println!("Status: Not fully connected."),
-    }
+struct ConsoleLogger;
+struct FileLogger { path: String }
+
+impl Logger for ConsoleLogger {
+    fn log(&self, message: &str) { println!("[Console]: {}", message); }
+}
+
+// Superpower: Using a Generic with a Trait Bound
+fn run_app<L: Logger>(logger: L) {
+    logger.log("Application started!");
+}
+
+fn main() {
+    let logger = ConsoleLogger;
+    run_app(logger); // Works with any type that implements Logger
 }
