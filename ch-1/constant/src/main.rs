@@ -1,20 +1,22 @@
-trait Logger {
-    fn log(&self, message: &str);
+#[derive(Debug)]
+struct ServerConfig {
+    port: u16,
+    timeout: u32,
+    workers: u8,
 }
 
-struct ConsoleLogger;
-struct FileLogger { path: String }
-
-impl Logger for ConsoleLogger {
-    fn log(&self, message: &str) { println!("[Console]: {}", message); }
-}
-
-// Superpower: Using a Generic with a Trait Bound
-fn run_app<L: Logger>(logger: L) {
-    logger.log("Application started!");
+impl Default for ServerConfig {
+    fn default() -> Self {
+        Self { port: 8080, timeout: 30, workers: 4 }
+    }
 }
 
 fn main() {
-    let logger = ConsoleLogger;
-    run_app(logger); // Works with any type that implements Logger
+    // Start with the default, but override just the port
+    let dev_config = ServerConfig {
+        port: 3000,
+        ..Default::default()
+    };
+
+    println!("Starting server: {:?}", dev_config);
 }
