@@ -1,19 +1,25 @@
-enum Payment {
-    Pending,
-    Processing { provider: String },
-    Success { transaction_id: u32, amount: f64 },
-    Failed { reason: String, code: i32 },
+enum TrafficLight {
+    Red,
+    Yellow,
+    Green,
 }
 
-fn process_payment(payment: Payment) {
-    match payment {
-        // We only get access to transaction_id if the state is Success
-        Payment::Success { transaction_id, amount } => {
-            println!("Receipt sent for ID: {} (${})", transaction_id, amount);
+impl TrafficLight {
+    // A method that returns the duration for each state
+    fn duration(&self) -> u32 {
+        match self {
+            TrafficLight::Red => 30,
+            TrafficLight::Yellow => 5,
+            TrafficLight::Green => 45,
         }
-        Payment::Failed { reason, .. } => {
-            println!("Alert: Payment failed due to {}", reason);
+    }
+
+    // A method to get the next light in the sequence
+    fn next(&self) -> Self {
+        match self {
+            TrafficLight::Green => TrafficLight::Yellow,
+            TrafficLight::Yellow => TrafficLight::Red,
+            TrafficLight::Red => TrafficLight::Green,
         }
-        _ => println!("Payment is still in progress..."),
     }
 }
