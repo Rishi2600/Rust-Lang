@@ -1,25 +1,28 @@
-enum TrafficLight {
-    Red,
-    Yellow,
-    Green,
+struct UserProfile {
+    username: String,
+    role: String,
 }
 
-impl TrafficLight {
-    // A method that returns the duration for each state
-    fn duration(&self) -> u32 {
-        match self {
-            TrafficLight::Red => 30,
-            TrafficLight::Yellow => 5,
-            TrafficLight::Green => 45,
-        }
-    }
+enum UserSession {
+    Guest,
+    Authenticated(UserProfile),
+    Banned { reason: String, expiry: String },
+}
 
-    // A method to get the next light in the sequence
-    fn next(&self) -> Self {
-        match self {
-            TrafficLight::Green => TrafficLight::Yellow,
-            TrafficLight::Yellow => TrafficLight::Red,
-            TrafficLight::Red => TrafficLight::Green,
+fn access_admin_panel(session: &UserSession) {
+    match session {
+        // Using "Nested Pattern Matching"
+        UserSession::Authenticated(profile) if profile.role == "Admin" => {
+            println!("Welcome, Master {}. Access granted.", profile.username);
+        }
+        UserSession::Authenticated(_) => {
+            println!("Access Denied: Standard users cannot enter.");
+        }
+        UserSession::Banned { reason, .. } => {
+            println!("Your account is restricted: {}", reason);
+        }
+        UserSession::Guest => {
+            println!("Please log in to continue.");
         }
     }
 }
