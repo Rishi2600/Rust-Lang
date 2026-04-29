@@ -1,22 +1,19 @@
-#[derive(Debug)]
-struct ServerConfig {
-    port: u16,
-    timeout: u32,
-    workers: u8,
+enum Payment {
+    Pending,
+    Processing { provider: String },
+    Success { transaction_id: u32, amount: f64 },
+    Failed { reason: String, code: i32 },
 }
 
-impl Default for ServerConfig {
-    fn default() -> Self {
-        Self { port: 8080, timeout: 30, workers: 4 }
+fn process_payment(payment: Payment) {
+    match payment {
+        // We only get access to transaction_id if the state is Success
+        Payment::Success { transaction_id, amount } => {
+            println!("Receipt sent for ID: {} (${})", transaction_id, amount);
+        }
+        Payment::Failed { reason, .. } => {
+            println!("Alert: Payment failed due to {}", reason);
+        }
+        _ => println!("Payment is still in progress..."),
     }
-}
-
-fn main() {
-    // Start with the default, but override just the port
-    let dev_config = ServerConfig {
-        port: 3000,
-        ..Default::default()
-    };
-
-    println!("Starting server: {:?}", dev_config);
 }
