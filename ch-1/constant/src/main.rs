@@ -24,6 +24,6 @@ fn access_admin_panel(session: &UserSession) {
         UserSession::Guest => {
             println!("Please log in to continue.");
         }
-        //this
+        
     }
 }
