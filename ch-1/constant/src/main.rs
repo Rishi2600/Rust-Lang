@@ -1,29 +1,20 @@
-struct UserProfile {
-    username: String,
-    role: String,
+use std::fs::File;
+use std::io::{self, Read};
+
+fn read_username_from_file() -> Result<String, io::Error> {
+    // The '?' means: If File::open fails, return the error immediately.
+    // If it succeeds, 'unwrap' the file and continue.
+    let mut f = File::open("username.txt")?;
+    let mut s = String::new();
+
+    f.read_to_string(&mut s)?;
+
+    Ok(s) // Success! Wrapped in the 'Ok' variant
 }
 
-enum UserSession {
-    Guest,
-    Authenticated(UserProfile),
-    Banned { reason: String, expiry: String },
-}
-
-fn access_admin_panel(session: &UserSession) {
-    match session {
-        // Using "Nested Pattern Matching"
-        UserSession::Authenticated(profile) if profile.role == "Admin" => {
-            println!("Welcome, Master {}. Access granted.", profile.username);
-        }
-        UserSession::Authenticated(_) => {
-            println!("Access Denied: Standard users cannot enter.");
-        }
-        UserSession::Banned { reason, .. } => {
-            println!("Your account is restricted: {}", reason);
-        }
-        UserSession::Guest => {
-            println!("Please log in to continue.");
-        }
-        
+fn main() {
+    match read_username_from_file() {
+        Ok(name) => println!("Username: {}", name),
+        Err(e) => eprintln!("Failed to read file: {}", e),
     }
 }
