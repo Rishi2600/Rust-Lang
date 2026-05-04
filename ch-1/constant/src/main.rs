@@ -1,12 +1,22 @@
+use std::cell::RefCell;
+
+struct UIElement {
+    id: i32,
+    // RefCell lets us change 'clicks' even if the struct is 'immutable'
+    clicks: RefCell<u32>, 
+}
+
 fn main() {
-    let numbers = vec![1, 2, 3, 4, 5, 6];
+    let button = UIElement {
+        id: 1,
+        clicks: RefCell::new(0),
+    };
 
-    // The Flow: Filter for even, square them, then collect into a new Vec
-    let doubled_evens: Vec<i32> = numbers
-        .iter()
-        .filter(|&&x| x % 2 == 0) // Keep even numbers
-        .map(|&x| x * x)         // Square them
-        .collect();              // Finalize into a collection
+    // Note: 'button' is NOT marked 'mut'
+    {
+        let mut tracker = button.clicks.borrow_mut();
+        *tracker += 1;
+    }
 
-    println!("{:?}", doubled_evens); // [4, 16, 36]
+    println!("Button {} clicked {} times", button.id, button.clicks.borrow());
 }
