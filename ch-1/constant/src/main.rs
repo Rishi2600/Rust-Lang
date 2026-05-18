@@ -8,7 +8,7 @@ struct UIElement {
 
 fn main() {
     let button = UIElement {
-        id: 1,
+        id: 100,
         clicks: RefCell::new(0),
     };
 
