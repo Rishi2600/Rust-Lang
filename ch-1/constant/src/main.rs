@@ -1,22 +1,22 @@
-use std::cell::RefCell;
+// Defining unique types wrapped around f64
+struct Meters(f64);
+struct Seconds(f64);
+struct Kmph(f64);
 
-struct UIElement {
-    id: i32,
-    // RefCell lets us change 'clicks' even if the struct is 'immutable'
-    clicks: RefCell<u32>, 
+fn calculate_speed(distance: Meters, time: Seconds) -> Kmph {
+    // We unwrap the inner value using tuple indexing (.0)
+    let speed_mps = distance.0 / time.0;
+    Kmph(speed_mps * 3.6)
 }
 
 fn main() {
-    let button = UIElement {
-        id: 100,
-        clicks: RefCell::new(0),
-    };
+    let dist = Meters(100.0);
+    let time = Seconds(10.0);
 
-    // Note: 'button' is NOT marked 'mut'
-    {
-        let mut tracker = button.clicks.borrow_mut();
-        *tracker += 1;
-    }
+    // This compiles perfectly
+    let speed = calculate_speed(dist, time);
+    println!("Speed: {} km/h", speed.0);
 
-    println!("Button {} clicked {} times", button.id, button.clicks.borrow());
+    // let bad_attempt = calculate_speed(time, dist); 
+    // ❌ COMPILE ERROR: Expected Meters, found Seconds!
 }
