@@ -1,22 +1,25 @@
-// Defining unique types wrapped around f64
-struct Meters(f64);
-struct Seconds(f64);
-struct Kmph(f64);
+struct SmartConnection {
+    id: String,
+}
 
-fn calculate_speed(distance: Meters, time: Seconds) -> Kmph {
-    // We unwrap the inner value using tuple indexing (.0)
-    let speed_mps = distance.0 / time.0;
-    Kmph(speed_mps * 3.6)
+impl SmartConnection {
+    fn send_data(&self, msg: &str) {
+        println!("Sending via [{}]: {}", self.id, msg);
+    }
+}
+
+// Custom drop logic runs automatically when the variable dies
+impl Drop for SmartConnection {
+    fn drop(&mut self) {
+        println!("Disconnecting [{}] safely... Clear buffers... Freeing sockets.", self.id);
+    }
 }
 
 fn main() {
-    let dist = Meters(100.0);
-    let time = Seconds(10.0);
+    {
+        let conn = SmartConnection { id: String::from("DB_CONN_1") };
+        conn.send_data("SELECT * FROM users;");
+    } // <-- `conn` goes out of scope HERE. `drop` runs immediately.
 
-    // This compiles perfectly
-    let speed = calculate_speed(dist, time);
-    println!("Speed: {} km/h", speed.0);
-
-    // let bad_attempt = calculate_speed(time, dist); 
-    // ❌ COMPILE ERROR: Expected Meters, found Seconds!
+    println!("Back in main scope. The connection is already dead.");
 }
