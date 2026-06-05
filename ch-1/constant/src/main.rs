@@ -1,21 +1,25 @@
-// This function accepts a slice. It works on Vectors, Fixed Arrays, or Sub-slices!
-fn print_first_two(items: &[i32]) {
-    if let [first, second, ..] = items {
-        println!("First two items are: {} and {}", first, second);
-    } else {
-        println!("Not enough items!");
-    }
+use std::sync::OnceLock;
+
+// Global, thread-safe, lazily-initialized variable
+static GLOBAL_CONFIG: OnceLock<String> = OnceLock::new();
+
+fn get_config() -> &'static str {
+    // The closure inside 'get_or_init' only runs the first time this function is called
+    GLOBAL_CONFIG.get_or_init(|| {
+        println!("--- Loading configuration from disk (EXPENSIVE) ---");
+        String::from("DATABASE_URL=localhost; PORT=5432;")
+    })
 }
 
 fn main() {
-    let my_vector: Vec<i32> = vec![10, 20, 30];
-    let my_array: [i32; 4] = [100, 200, 300, 400];
+    println!("Main started. No config loaded yet.");
+    
+    // Call 1: Runs the initialization logic
+    let config1 = get_config();
+    
+    // Call 2: Returns a direct reference immediately without running the closure
+    let config2 = get_config();
 
-    // 1. Pass a vector as a slice
-    print_first_two(&my_vector);
-
-    // 2. Pass a fixed array as a slice
-    print_first_two(&my_array);
-
-    // 3. Pass a SUB-SLICE (just elements 200 and 300 from the array)
-    print_first_two(&my_array[1..3]);
+    println!("Config 1: {}", config1);
+    println!("Config 2: {}", config2);
+}
