@@ -1,26 +1,19 @@
-use std::ops::Deref;
+// Guarantees that at the assembly level, UserId is exactly identical to a raw u64
+#[repr(transparent)]
+struct UserId(u64);
 
-struct EncryptedString {
-    raw_bytes: String,
-}
-
-impl Deref for EncryptedString {
-    type Target = String;
-
-    // Automatically routes references to the inner String
-    fn deref(&self) -> &Self::Target {
-        &self.raw_bytes
-    }
-}
-
-fn print_length(s: &String) {
-    println!("Length: {}", s.len());
+fn process_raw_ids(ids: &[u64]) {
+    println!("Processing {} ids at address: {:p}", ids.len(), ids.as_ptr());
 }
 
 fn main() {
-    let secret = EncryptedString { raw_bytes: String::from("SecretPassword") };
-    
-    // Magic: We pass &secret (EncryptedString), but the compiler implicitly 
-    // transforms it into &String via Deref coercion!
-    print_length(&secret);
+    let my_user_ids: Vec<UserId> = vec![UserId(1), UserId(2), UserId(3)];
+
+    // Magic: Because of repr(transparent), we can unsafely cast a slice of 
+    // UserId directly into a slice of u64 instantly with ZERO copies.
+    let raw_ids: &[u64] = unsafe {
+        std::slice::from_raw_parts(my_user_ids.as_ptr() as *const u64, my_user_ids.len())
+    };
+
+    process_raw_ids(raw_ids);
 }
