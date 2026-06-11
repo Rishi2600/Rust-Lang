@@ -1,19 +1,19 @@
-// Guarantees that at the assembly level, UserId is exactly identical to a raw u64
-#[repr(transparent)]
-struct UserId(u64);
+trait Highlight {
+    fn print_highlighted(&self);
+}
 
-fn process_raw_ids(ids: &[u64]) {
-    println!("Processing {} ids at address: {:p}", ids.len(), ids.as_ptr());
+// Blanket Implementation: Any type that implements std::fmt::Display 
+// automatically gets the Highlight trait implemented for it instantly.
+impl<T: std::fmt::Display> Highlight for T {
+    fn print_highlighted(&self) {
+        println!("✨ {} ✨", self);
+    }
 }
 
 fn main() {
-    let my_user_ids: Vec<UserId> = vec![UserId(1), UserId(2), UserId(3)];
-
-    // Magic: Because of repr(transparent), we can unsafely cast a slice of 
-    // UserId directly into a slice of u64 instantly with ZERO copies.
-    let raw_ids: &[u64] = unsafe {
-        std::slice::from_raw_parts(my_user_ids.as_ptr() as *const u64, my_user_ids.len())
-    };
-
-    process_raw_ids(raw_ids);
+    // i32 natively implements Display, so it magically has print_highlighted() now!
+    100.print_highlighted();
+    
+    // String natively implements Display, so it gets it too!
+    String::from("Hello World").print_highlighted();
 }
