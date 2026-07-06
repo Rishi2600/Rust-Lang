@@ -1,22 +1,17 @@
-use std::any::Any;
+// This struct and implementation only exist if compiling for a Linux system
+#[cfg(target_os = "linux")]
+fn print_platform_message() {
+    println!("Running on a Linux native kernel environment.");
+}
 
-fn process_unknown_type(value: &dyn Any) {
-    // Attempt to downcast the dynamic reference back into a concrete String
-    if let Some(string_ref) = value.downcast_ref::<String>() {
-        println!("Magic: Discovered a String value: '{}'", string_ref);
-    } 
-    // Attempt to downcast into an i32 instead
-    else if let Some(int_ref) = value.downcast_ref::<i32>() {
-        println!("Magic: Discovered an i32 value: {}", int_ref);
-    } else {
-        println!("Unknown type passed.");
-    }
+// This struct and implementation only exist if compiling for a Windows system
+#[cfg(target_os = "windows")]
+fn print_platform_message() {
+    println!("Running on a Windows operating system environment.");
 }
 
 fn main() {
-    let my_string = String::from("Hello Dynamic World");
-    let my_number = 42;
-
-    process_unknown_type(&my_string);
-    process_unknown_type(&my_number);
+    // Magic: The compiler resolves which function block exists 
+    // BEFORE translating any syntax into machine instructions.
+    print_platform_message();
 }
