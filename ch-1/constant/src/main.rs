@@ -1,29 +1,22 @@
-use std::marker::PhantomPinned;
-use std::pin::Pin;
+use std::any::Any;
 
-struct SelfReferential {
-    value: String,
-    // This pointer will target our own `value` field
-    internal_ptr: *const String,
-    // Opt-out of the 'Move' trait marker, forcing this struct to be unmovable once pinned
-    _marker: PhantomPinned, 
+fn process_unknown_type(value: &dyn Any) {
+    // Attempt to downcast the dynamic reference back into a concrete String
+    if let Some(string_ref) = value.downcast_ref::<String>() {
+        println!("Magic: Discovered a String value: '{}'", string_ref);
+    } 
+    // Attempt to downcast into an i32 instead
+    else if let Some(int_ref) = value.downcast_ref::<i32>() {
+        println!("Magic: Discovered an i32 value: {}", int_ref);
+    } else {
+        println!("Unknown type passed.");
+    }
 }
 
 fn main() {
-    // 1. Initialize a self-referential layout safely on the heap
-    let mut unpinned = Box::pin(SelfReferential {
-        value: String::from("SafeData"),
-        internal_ptr: std::ptr::null(),
-        _marker: PhantomPinned,
-    });
+    let my_string = String::from("Hello Dynamic World");
+    let my_number = 42;
 
-    // 2. Unsafely configure the raw pointer to target our own internal string address
-    unsafe {
-        let heap_ref = unpinned.as_mut().get_unchecked_mut();
-        heap_ref.internal_ptr = &heap_ref.value;
-        
-        // Magic: Pin prevents you from doing things like swapping or moving 
-        // this object out of the box, preserving the raw pointer address safely.
-        println!("Value via internal pointer: {}", *heap_ref.internal_ptr);
-    }
+    process_unknown_type(&my_string);
+    process_unknown_type(&my_number);
 }
