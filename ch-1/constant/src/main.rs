@@ -1,17 +1,15 @@
-// This struct and implementation only exist if compiling for a Linux system
-#[cfg(target_os = "linux")]
-fn print_platform_message() {
-    println!("Running on a Linux native kernel environment.");
-}
+use std::fmt::Display;
 
-// This struct and implementation only exist if compiling for a Windows system
-#[cfg(target_os = "windows")]
-fn print_platform_message() {
-    println!("Running on a Windows operating system environment.");
+// This generic function creates zero abstraction runtime overhead
+fn log_value<T: Display>(item: T) {
+    println!("[LOG]: {}", item);
 }
 
 fn main() {
-    // Magic: The compiler resolves which function block exists 
-    // BEFORE translating any syntax into machine instructions.
-    print_platform_message();
+    // At compile-time, Rust sees two distinct type uses:
+    log_value(100);          // 1. Generates: log_value_i32(item: i32)
+    log_value("System OK");  // 2. Generates: log_value_str(item: &str)
+    
+    // Magic: At runtime, your binary directly executes the specialized functions, 
+    // maximizing CPU execution cache locality.
 }
