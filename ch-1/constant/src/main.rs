@@ -1,28 +1,29 @@
-// A token representing exclusive access to an underlying system resource
-pub struct HardwareBus;
+use std::ptr;
 
-pub struct ThermalSensor;
-
-impl ThermalSensor {
-    // To read the sensor, you MUST hand over full ownership of the HardwareBus token.
-    // While this function runs, NO OTHER code can use the bus!
-    pub fn read_temperature(&self, bus: HardwareBus) -> (f32, HardwareBus) {
-        println!("Reading temp from hardware bus...");
-        let temp = 36.6;
-        
-        // Return the bus token back to the caller so it can be reused
-        (temp, bus)
-    }
+// Simulating a hardware control register mapped at a specific memory location
+#[repr(C)]
+struct HardwareRegister {
+    control: u32,
+    status: u32,
+    data: u32,
 }
 
 fn main() {
-    let bus = HardwareBus;
-    let sensor = ThermalSensor;
+    // A hypothetical physical address for a UART serial controller
+    let fake_hardware_address: usize = 0x1000_0000;
+    
+    // Cast the raw integer memory address directly into a raw pointer
+    let reg_ptr = fake_hardware_address as *mut HardwareRegister;
 
-    // We pass 'bus' by value, transferring ownership into the function
-    let (temp, bus) = sensor.read_temperature(bus);
-    println!("Temp: {}°C", temp);
+    println!("Hardware register configured at memory location: {:p}", reg_ptr);
 
-    // If we try to use 'bus' while it's inside another function:
-    // let (temp2, bus) = sensor.read_temperature(bus); // Compiles fine because 'bus' was returned!
+    // UNSAFE BLOCK: Reading/Writing to raw memory addresses directly
+    unsafe {
+        // Volatile write ensures the compiler NEVER optimizes away this store instruction,
+        // which is critical for toggling physical hardware pins.
+        // (Commented out to prevent segmentation fault on standard host environments)
+        // ptr::write_volatile(&mut (*reg_ptr).control, 0x01); 
+        
+        println!("Magic: Volatile memory instructions generated for register access.");
+    }
 }
