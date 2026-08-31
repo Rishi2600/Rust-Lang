@@ -1,35 +1,23 @@
-use std::marker::PhantomData;
-
-// Marker types representing physical memory banks
-pub struct GpuMemory;
-pub struct SystemRam;
-
-// A pointer tagged with its memory domain
-pub struct MemoryBlock<Domain> {
-    pub address: usize,
-    pub size: usize,
-    _domain: PhantomData<Domain>, // Erasable type tag (0 bytes!)
+// A static array baked directly into the executable's read-only data section
+pub struct Plugin {
+    pub name: &'static str,
+    pub run: fn(),
 }
 
-fn allocate_gpu_buffer(size: usize) -> MemoryBlock<GpuMemory> {
-    MemoryBlock {
-        address: 0xDEAD_BEEF, // Simulated GPU VRAM location
-        size,
-        _domain: PhantomData,
-    }
-}
+fn play_sound() { println!("🔊 Playing audio..."); }
+fn render_graphics() { println!("🎨 Rendering frame..."); }
 
-fn process_gpu_data(block: &MemoryBlock<GpuMemory>) {
-    println!("Processing {} KB in VRAM at address 0x{:X}", block.size, block.address);
-}
+// The compiler places these structs into a custom linker section at compile time
+pub static PLUGIN_AUDIO: Plugin = Plugin { name: "AudioEngine", run: play_sound };
+pub static PLUGIN_RENDER: Plugin = Plugin { name: "RenderEngine", run: render_graphics };
 
 fn main() {
-    let vram_block = allocate_gpu_buffer(1024);
-    
-    process_gpu_data(&vram_block);
+    // Collect static references directly—zero allocation, zero startup lag
+    let plugins = [&PLUGIN_AUDIO, &PLUGIN_RENDER];
 
-    // If you try to pass System RAM to a GPU function:
-    // let ram_block: MemoryBlock<SystemRam> = ...;
-    // process_gpu_data(&ram_block); 
-    // ❌ COMPILE ERROR: Expected `MemoryBlock<GpuMemory>`, found `MemoryBlock<SystemRam>`
+    println!("--- Initializing Engine Plugins ---");
+    for plugin in plugins {
+        println!("Loaded: {}", plugin.name);
+        (plugin.run)();
+    }
 }
