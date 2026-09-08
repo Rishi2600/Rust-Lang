@@ -1,15 +1,13 @@
-fn set_scheduling_policy(pid: i32, policy: i32, priority: i32) -> Result<(), String> {
+fn set_process_nice(nice_value: i32) -> Result<(), String> {
     unsafe {
-        let param = sched_param {
-            sched_priority: priority,
-        };
+        // Reset errno before libc call
+        *libc::__errno_location() = 0;
+        let res = libc::nice(nice_value);
 
-        let res = sched_setscheduler(pid, policy, &param as *const sched_param);
-
-        if res == 0 {
-            Ok(())
+        if res == -1 && Error::last_os_error().raw_os_error().unwrap_or(0) != 0 {
+            Err(format!("Failed to set nice value: {}", Error::last_os_error()))
         } else {
-            Err(format!("Failed to set scheduling policy: {}", Error::last_os_error()))
+            Ok(())
         }
     }
 }
