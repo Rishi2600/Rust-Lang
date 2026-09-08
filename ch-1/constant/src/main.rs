@@ -1,19 +1,15 @@
-fn set_cpu_affinity(pid: i32, cpu_core: usize) -> Result<(), String> {
+fn set_scheduling_policy(pid: i32, policy: i32, priority: i32) -> Result<(), String> {
     unsafe {
-        let mut set: cpu_set_t = std::mem::zeroed();
-        CPU_ZERO(&mut set);
-        CPU_SET(cpu_core, &mut set);
+        let param = sched_param {
+            sched_priority: priority,
+        };
 
-        let res = libc::sched_setaffinity(
-            pid,
-            std::mem::size_of::<cpu_set_t>(),
-            &set as *const cpu_set_t,
-        );
+        let res = sched_setscheduler(pid, policy, &param as *const sched_param);
 
         if res == 0 {
             Ok(())
         } else {
-            Err(format!("Failed to set CPU affinity: {}", Error::last_os_error()))
+            Err(format!("Failed to set scheduling policy: {}", Error::last_os_error()))
         }
     }
 }
